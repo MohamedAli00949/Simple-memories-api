@@ -20,6 +20,12 @@ const Data = require("./db/fackMemorise.js");
 /**
  * req => request
  * res => response
+ * 
+ * status => response status code
+ *    200 - 299 ===>> Successful responses
+ *    300 - 399 ===>> Redirection responses
+ *    400 - 499 ===>> Client-error responses (problem with client)
+ *    500 - 599 ===>> Server-error responses (problem with server)
  */
 app.get("/api/memories/", async (req, res) => {
   try {
@@ -51,6 +57,12 @@ app.get("/api/memories/", async (req, res) => {
 /**
  * req => request
  * res => response
+ * 
+ * status => response status code
+ *    200 - 299 ===>> Successful responses
+ *    300 - 399 ===>> Redirection responses
+ *    400 - 499 ===>> Client-error responses (problem with client)
+ *    500 - 599 ===>> Server-error responses (problem with server)
  */
 app.get('/api/memories/:id', async (req, res) => {
   try {
@@ -91,6 +103,8 @@ app.post("/api/memories/", async (req, res) => {
   try {
     const { userId, title, body } = req.body;
 
+    if (!userId) return res.status(401).json({ message: "No " })
+
     if (!title || !body)
       return res
         .status(400)
@@ -98,7 +112,7 @@ app.post("/api/memories/", async (req, res) => {
 
     const data = Data.addData({ userId, title, body });
 
-    res.status(200).json({
+    res.status(201).json({
       data: data,
       total: Data.data.length,
     });
@@ -113,5 +127,34 @@ app.post("/api/memories/", async (req, res) => {
     console.log(error);
   }
 });
+
+app.put("/api/memories/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, body } = req.body;
+    const realId = Number(id);
+
+    if (!title && !body)
+      return res
+        .status(400)
+        .json({ message: "Required data is missing." });
+
+    const oldData = Data.findOne(realId);
+
+    if (oldData === -1) return res.status(404).json({ message: "Not founded data for this id." });
+
+    const data = Data.updataData(realId, { title, body });
+
+    res.status(200).json({ message: "Successful update", data });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message:
+          error?.message || "Some thing wrong at server or your code"
+      });
+    console.log(error);
+  }
+})
 
 module.exports = app;

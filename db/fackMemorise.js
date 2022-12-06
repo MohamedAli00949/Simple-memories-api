@@ -247,10 +247,17 @@ class FakeMemories {
   }
 
   updataData(dataId, newData) {
-    const oldData = this.data.find(d => d.id === dataId);
-    this.data.find(d => d.id === dataId) = Object.assign(newData, oldData);
+    const dataIndex = this.data.findIndex(d => d.id === dataId);
 
-    return this.data.find(d => d.id === dataId);
+    const newDataArr = Object.entries(newData);
+
+    newDataArr.forEach((prop) => {
+      if (prop[1]) {
+        this.data[dataIndex] = { ...this.data[dataIndex], [prop[0]]: prop[1] };
+      }
+    })
+
+    return this.data[dataIndex];
   }
 }
 
