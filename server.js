@@ -163,6 +163,8 @@ app.delete("/api/memories/:id", async (req, res) => {
     const { id } = req.params;
     const data = Data.removeData(Number(id));
 
+    if (oldData === -1) return res.status(404).json({ message: "Not founded data for this id." });
+
     res.status(200).json(data);
 
   } catch (error) {
