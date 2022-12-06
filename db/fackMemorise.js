@@ -243,7 +243,7 @@ class FakeMemories {
 
   removeData(dataId) {
     this.data.filter(d => d.id !== dataId);
-    return dataId;
+    return { message: "Deleted successfully" };
   }
 
   updataData(dataId, newData) {

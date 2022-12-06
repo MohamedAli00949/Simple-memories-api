@@ -157,4 +157,22 @@ app.put("/api/memories/:id", async (req, res) => {
   }
 })
 
+app.delete("/api/memories/:id", async (req, res) => {
+  try {
+
+    const { id } = req.params;
+    const data = Data.removeData(Number(id));
+
+    res.status(200).json(data);
+
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message:
+          error?.message || "Some thing wrong at server or your code"
+      });
+    console.log(error);
+  }
+});
 module.exports = app;
